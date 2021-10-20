@@ -57,13 +57,22 @@ final class PostProcessorRegistrationDelegate {
 			ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
 		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
+		// 如果有 BeanDefinitionRegistryPostProcessor 的话优先执行
 		Set<String> processedBeans = new HashSet<>();
 
+		// 如果是 BeanDefinitionRegistry 类型
 		if (beanFactory instanceof BeanDefinitionRegistry) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+			// 用于记录常规的 BeanFactoryPostProcessor
 			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
+			// 用于记录 BeanDefinitionRegistryPostProcessor
 			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
 
+			// 遍历所有参数传递进来的 BeanFactoryPostProcessor（它们并没有作为 bean 注册在容器中）
+			// 将所有参数传入的 BeanFactoryPostProcessor 分成两组：
+			// BeanDefinitionRegistryPostProcessor 和常规的 BeanFactoryPostProcessor
+			// 1.如果是 BeanDefinitionRegistryPostProcessor，现在执行 postProcessBeanDefinitionRegistry()
+			// 2.否则记录为一个常规 BeanFactoryPostProcessor，暂时不执行处理
 			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
 				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
 					BeanDefinitionRegistryPostProcessor registryProcessor =

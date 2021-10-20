@@ -871,6 +871,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
+		// 初始化所有非懒加载的单例 bean
 		for (String beanName : beanNames) {
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
@@ -900,6 +901,13 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		// Trigger post-initialization callback for all applicable beans...
+		/* 触发所有适用 bean 的 post-initialization 回调 */
+		// bean 已经完全处理完了
+		// @EventListener 标注的方法被 DefaultEventListenerFactory 包装成 ApplicationListenerMethodAdapter
+		// @EventListener 中的 classes 就是事件对象
+		// ApplicationListenerMethodAdapter 注册到 ApplicationContext 中。
+		// 等待事件源发布通知
+		// 通知后执行的逻辑就是标注 @EventListener 的方法逻辑
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName);
 			if (singletonInstance instanceof SmartInitializingSingleton) {
