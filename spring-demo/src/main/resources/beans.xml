@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="welcomeService" class="com.ashen.bean.service.impl.WelcomeServiceImpl"/>
+	
+	<!-- 1. 使用类的无参构造创建 -->
+	<bean id="user1" class="com.ashen.bean.entity.User" scope="singleton" lazy-init="true" primary="true"/>
+	<!-- 2. 使用静态工厂创建 
+		class 的值不是 User 对象的全路径，而是静态工厂的全路径
+		factory-method 为值写调用的方法 
+	-->
+	<bean id="user2" class="com.ashen.bean.factory.StaticFactory" factory-method="getUser" scope="singleton" lazy-init="true" primary="true"/>
+	<!-- 3. 使用实例工厂常见
+		需要先创建工厂对象，再通过工厂对象进行调用
+	-->
+	<bean id="userFactory" class="com.ashen.bean.factory.UserFactory"/>
+	<bean id="user3" factory-bean="userFactory" factory-method="getUser" scope="prototype"/>
+
+	<bean id="userFactoryBean" class="com.ashen.bean.factory.UserFactoryBean"/>
+	
+</beans>
