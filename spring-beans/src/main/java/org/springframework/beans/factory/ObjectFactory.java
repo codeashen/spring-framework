@@ -36,6 +36,9 @@ import org.springframework.beans.BeansException;
  * @param <T> the object type
  * @see FactoryBean
  */
+// 获取 Bean 的工厂，类似 FactoryBean，不同点是：
+// - FactoryBean 是给用户使用的，主要用于创建用户自定义的 Bean；
+// - ObjectFactory 是给内部容器使用的。
 @FunctionalInterface
 public interface ObjectFactory<T> {
 

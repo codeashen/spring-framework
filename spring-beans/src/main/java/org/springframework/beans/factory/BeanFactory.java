@@ -122,6 +122,9 @@ public interface BeanFactory {
 	 * {@code myJndiObject} is a FactoryBean, getting {@code &myJndiObject}
 	 * will return the factory, not the instance returned by the factory.
 	 */
+	// 对 FactoryBean 的转移前缀，提供获取 FactoryBean 实例的方式，
+	// 如果适用 bean 的名称获取实例，得到的是 FactoryBean#getObject 生产的对象，
+	// 如果得到 FactoryBean 本身，需要在名称前加此前缀
 	String FACTORY_BEAN_PREFIX = "&";
 
 
