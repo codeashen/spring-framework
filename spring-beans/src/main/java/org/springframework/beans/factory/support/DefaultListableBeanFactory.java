@@ -860,10 +860,6 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		return (this.configurationFrozen || super.isBeanEligibleForMetadataCaching(beanName));
 	}
 
-	/**
-	 * 确保所有非延迟初始化的单例都被实例化，同时考虑 FactoryBeans。如果需要，通常在工厂设置结束时调用。
-	 * @throws BeansException
-	 */
 	@Override
 	public void preInstantiateSingletons() throws BeansException {
 		if (logger.isTraceEnabled()) {

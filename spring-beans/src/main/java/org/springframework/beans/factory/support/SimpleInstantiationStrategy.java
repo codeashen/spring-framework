@@ -60,11 +60,15 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 	@Override
 	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner) {
 		// Don't override the class with CGLIB if no overrides.
+		// 如果 bean 定义里的方法没有被覆盖，即是否有 lookup-method 或 replaced-method 属性，
+		// 如果没有则不需要 cglib 来重写，否则需要使用 cglib 创建代理子类
 		if (!bd.hasMethodOverrides()) {
 			Constructor<?> constructorToUse;
 			synchronized (bd.constructorArgumentLock) {
+				// 获取对象的构造方法或工厂方法
 				constructorToUse = (Constructor<?>) bd.resolvedConstructorOrFactoryMethod;
 				if (constructorToUse == null) {
+					// 使用反射机制获取 bean 的类，如果是接口直接报错
 					final Class<?> clazz = bd.getBeanClass();
 					if (clazz.isInterface()) {
 						throw new BeanInstantiationException(clazz, "Specified class is an interface");
@@ -84,10 +88,12 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
+			// 使用 BeanUtils，最终调用 newInstance 方法通过反射来获取实例
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
 			// Must generate CGLIB subclass.
+			// 方法有被覆盖，必须使用 cglib 生成代理子类
 			return instantiateWithMethodInjection(bd, beanName, owner);
 		}
 	}

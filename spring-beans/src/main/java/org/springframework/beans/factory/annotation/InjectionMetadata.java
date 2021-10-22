@@ -66,10 +66,23 @@ public class InjectionMetadata {
 	};
 
 
+	/**
+	 * 目标 bean 的 Class
+	 */
 	private final Class<?> targetClass;
 
+	/**
+	 * 保存了被注入元素的全量集合（包括 Spring 处理的或者外部处理的）
+	 * 
+	 * 当 post-processor 处理 bean 时，会解析 bean Class 的所有属性，
+	 * 在解析时会判断属性或方法上是否有 @Value 或者 @Autowired 注解，
+	 * 如果有就解析这个属性并将结果存入这里这个集合中。
+	 */
 	private final Collection<InjectedElement> injectedElements;
 
+	/**
+	 * 和 injectedElements 一样，只不过保存了由 Spring 容器默认进行处理的属性或方法
+	 */
 	@Nullable
 	private volatile Set<InjectedElement> checkedElements;
 
@@ -165,11 +178,13 @@ public class InjectionMetadata {
 	 * A single injected element.
 	 */
 	public abstract static class InjectedElement {
-
+		// 被注解标记的 Field 或 Method
 		protected final Member member;
 
+		// 注解标记的是否为 Field
 		protected final boolean isField;
 
+		// 属性描述，java.beans 包下的接口
 		@Nullable
 		protected final PropertyDescriptor pd;
 
