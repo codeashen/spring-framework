@@ -11,4 +11,9 @@ public class WelcomeServiceImpl implements WelcomeService {
 	public void sayHello(String message) {
 		System.out.println(message);
 	}
+
+	@Override
+	public void justThrowException() {
+		throw new RuntimeException("Hello Exception");
+	}
 }

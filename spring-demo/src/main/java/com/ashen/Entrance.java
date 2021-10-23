@@ -11,12 +11,23 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 @Configuration
+@EnableAspectJAutoProxy
 @ComponentScan("com.ashen")
 public class Entrance {
 	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(Entrance.class);
+		WelcomeService welcomeService = context.getBean(WelcomeService.class);
+		System.out.println("---------------- 正常方法 AOP ----------------");
+		welcomeService.sayHello("Hello, AOP");
+		System.out.println("---------------- 异常方法 AOP ----------------");
+		welcomeService.justThrowException();
+	}
+	
+	public static void main2(String[] args) {
 		ApplicationContext context = new AnnotationConfigApplicationContext(Entrance.class);
 		
 		System.out.println("---------------- 获取 Bean 定义 ----------------");
@@ -44,7 +55,7 @@ public class Entrance {
 		publisher.publishEvent(new CustomApplicationEvent(publisher, "事件1"));
 	}
 
-	public static void main2(String[] args) {
+	public static void main1(String[] args) {
 		ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
 		WelcomeService welcomeService = (WelcomeService) context.getBean("welcomeService");
 		welcomeService.sayHello("Hello，强大的 Spring 框架!");
