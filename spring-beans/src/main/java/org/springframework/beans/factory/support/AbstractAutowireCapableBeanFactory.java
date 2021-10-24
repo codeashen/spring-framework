@@ -1143,22 +1143,29 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
+	 * 执行 before-instantiation 的 post-processors，即实例化前的 post-processors，
+	 * 解析是否可以走捷径在实例化前生成 bean。
 	 * Apply before-instantiation post-processors, resolving whether there is a
 	 * before-instantiation shortcut for the specified bean.
-	 * @param beanName the name of the bean
-	 * @param mbd the bean definition for the bean
-	 * @return the shortcut-determined bean instance, or {@code null} if none
+	 * @param beanName bean 名称
+	 * @param mbd      bean 定义
+	 * @return 如果快捷生成了 bean 实例，则返回该实例，否则返回 null
 	 */
 	@Nullable
 	protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
 		Object bean = null;
+		// 如果 beforeInstantiationResolved 还没有设置或者是 false（说明还没有需要在实例化前执行的操作）
 		if (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) {
 			// Make sure bean class is actually resolved at this point.
+			// mbd.isSynthetic() 默认是 false
+			// 如果注册了 InstantiationAwareBeanPostProcessor 类型的 BeanPostProcessors
 			if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 				Class<?> targetType = determineTargetType(beanName, mbd);
 				if (targetType != null) {
+					// 尝试从 InstantiationAwareBeanPostProcessor 中获取 bean
 					bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
 					if (bean != null) {
+						// 获取到了就继续为 bean 调用所有 BeanPostProcessor 的后置处理方法
 						bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
 					}
 				}
@@ -1169,14 +1176,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
-	 * Apply InstantiationAwareBeanPostProcessors to the specified bean definition
-	 * (by class and name), invoking their {@code postProcessBeforeInstantiation} methods.
-	 * <p>Any returned object will be used as the bean instead of actually instantiating
-	 * the target bean. A {@code null} return value from the post-processor will
-	 * result in the target bean being instantiated.
-	 * @param beanClass the class of the bean to be instantiated
-	 * @param beanName the name of the bean
-	 * @return the bean object to use instead of a default instance of the target bean, or {@code null}
+	 * 获取容器中所有的 InstantiationAwareBeanPostProcessor，逐个调用其 postProcessBeforeInstantiation 方法，
+	 * 传入 bean 的定义（类型和名称），只要有一个返回了对象，就将该对象作为 bean 定义的实例。
+	 * 如果本方法返回了 bean 实例，就不会走后面的 bean 实例化过程（doCreateBean），如果返回 null 则继续实例化。
+	 * 
+	 * @param beanClass 要实例化的 bean 的类
+	 * @param beanName  bean 的名称
+	 * @return 成功创建了实例，则返回 bean 实例，否则返回 null
 	 * @see InstantiationAwareBeanPostProcessor#postProcessBeforeInstantiation
 	 */
 	@Nullable

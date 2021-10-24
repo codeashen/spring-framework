@@ -110,6 +110,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
 
 	/** Indicates whether any InstantiationAwareBeanPostProcessors have been registered. */
+	// 标记是否注册了任何 InstantiationAwareBeanPostProcessor
 	private volatile boolean hasInstantiationAwareBeanPostProcessors;
 
 	/** Indicates whether any DestructionAwareBeanPostProcessors have been registered. */
@@ -307,7 +308,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				// region 【根据 scope 创建 bean 实例】
 				// 如果 BeanDefinition 为单例
 				if (mbd.isSingleton()) {
-					// 这里适用匿名内部类，创建 Bean 实例对象，并注册给所依赖的对象
+					// 这里使用匿名内部类，创建 Bean 实例对象，并注册给所依赖的对象
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
 							// 创建单例 bean 方法
@@ -955,8 +956,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	/**
-	 * Return whether this factory holds a InstantiationAwareBeanPostProcessor
-	 * that will get applied to singleton beans on creation.
+	 * 判断容器中是否注册了 InstantiationAwareBeanPostProcessor
 	 * @see #addBeanPostProcessor
 	 * @see org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor
 	 */
