@@ -116,17 +116,24 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 
 	@Override
-	public List<Advisor> getAdvisors(MetadataAwareAspectInstanceFactory aspectInstanceFactory) {
+	public List<Advisor>  getAdvisors(MetadataAwareAspectInstanceFactory aspectInstanceFactory) {
+		// 获取 Aspect 切面类的 Class
 		Class<?> aspectClass = aspectInstanceFactory.getAspectMetadata().getAspectClass();
+		// 获取 Aspect 切面类的名称
 		String aspectName = aspectInstanceFactory.getAspectMetadata().getAspectName();
+		// 校验切面类
 		validate(aspectClass);
 
 		// We need to wrap the MetadataAwareAspectInstanceFactory with a decorator
 		// so that it will only instantiate once.
+		// 我们使用的是包装模式来包装我们的 MetadataAwareAspectInstanceFactory 
+		// 构建为 MetadataAwareAspectInstanceFactory
 		MetadataAwareAspectInstanceFactory lazySingletonAspectInstanceFactory =
 				new LazySingletonAspectInstanceFactoryDecorator(aspectInstanceFactory);
 
 		List<Advisor> advisors = new ArrayList<>();
+		// 获取切面类中所有的方法，但是该方法不会解析到标注了 @Pointcut 注解的方法，
+		// 循环解析切面中的方法
 		for (Method method : getAdvisorMethods(aspectClass)) {
 			// Prior to Spring Framework 5.2.7, advisors.size() was supplied as the declarationOrderInAspect
 			// to getAdvisor(...) to represent the "current position" in the declared methods list.
@@ -203,7 +210,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 			int declarationOrderInAspect, String aspectName) {
 
 		validate(aspectInstanceFactory.getAspectMetadata().getAspectClass());
-
+		// 切面的方法上构建切点表达式
 		AspectJExpressionPointcut expressionPointcut = getPointcut(
 				candidateAdviceMethod, aspectInstanceFactory.getAspectMetadata().getAspectClass());
 		if (expressionPointcut == null) {

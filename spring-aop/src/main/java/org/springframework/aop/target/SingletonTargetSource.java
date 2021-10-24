@@ -45,7 +45,7 @@ public class SingletonTargetSource implements TargetSource, Serializable {
 	private final Object target;
 
 
-	/**
+	/** 
 	 * Create a new SingletonTargetSource for the given target.
 	 * @param target the target object
 	 */

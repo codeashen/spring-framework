@@ -33,6 +33,8 @@ import org.aopalliance.aop.Advice;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
+// Advisor 下包含一个 Pointcut 和一个 Advice，
+// Spring 在处理 Aspect 配置的时候会将每一组切入点和通知组成一个 Advisor
 public interface Advisor {
 
 	/**

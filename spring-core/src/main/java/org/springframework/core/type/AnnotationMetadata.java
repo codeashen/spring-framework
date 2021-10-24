@@ -26,6 +26,7 @@ import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
 
 /**
+ * 在不需要加载该类的情况下，访问指定类型 Class 的注解信息。
  * Interface that defines abstract access to the annotations of a specific
  * class, in a form that does not require that class to be loaded yet.
  *
@@ -41,6 +42,7 @@ import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
 public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata {
 
 	/**
+	 * 获取存在于底层 Class 中的所有注解类型的完全限定类名。
 	 * Get the fully qualified class names of all annotation types that
 	 * are <em>present</em> on the underlying class.
 	 * @return the annotation type names
@@ -117,10 +119,9 @@ public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata
 
 
 	/**
-	 * Factory method to create a new {@link AnnotationMetadata} instance
-	 * for the given class using standard reflection.
-	 * @param type the class to introspect
-	 * @return a new {@link AnnotationMetadata} instance
+	 * 工厂方法，使用标准反射为指定的 Class 创建新 AnnotationMetadata 实例。
+	 * @param type 获取注解元信息的 Class
+	 * @return 返回一个新的 AnnotationMetadata 实例
 	 * @since 5.2
 	 */
 	static AnnotationMetadata introspect(Class<?> type) {

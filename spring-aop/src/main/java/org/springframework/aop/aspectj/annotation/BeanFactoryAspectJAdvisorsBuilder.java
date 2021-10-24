@@ -74,13 +74,13 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 
 
 	/**
-	 * Look for AspectJ-annotated aspect beans in the current bean factory,
-	 * and return to a list of Spring AOP Advisors representing them.
-	 * <p>Creates a Spring Advisor for each AspectJ advice method.
-	 * @return the list of {@link org.springframework.aop.Advisor} beans
+	 * 在当前 bean 工厂中查找有 @Aspect 注解的切面 bean，解析并返回 Spring AOP Advisor 列表。
+	 * 会为切面 bean 中的每个通知方法创建一个 Advisor。
+	 * 
+	 * @return 返回切面 bean 解析出的 {@link org.springframework.aop.Advisor} 实例列表
 	 * @see #isEligibleBean
 	 */
-	public List<Advisor> buildAspectJAdvisors() {
+	public List<Advisor>  buildAspectJAdvisors() {
 		List<String> aspectNames = this.aspectBeanNames;
 
 		if (aspectNames == null) {
@@ -88,30 +88,41 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 				aspectNames = this.aspectBeanNames;
 				if (aspectNames == null) {
 					List<Advisor> advisors = new ArrayList<>();
+					// 保存切面名称的集合
 					aspectNames = new ArrayList<>();
+					// 获取所有的 beanName，AOP 功能中在这里传入的 Object 对象，代表去容器中获取所有的组件名称，
+					// 然后遍历，这个过程十分消耗性能，所以说 Spring 会在这里加入了保存切面信息的缓存。
 					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 							this.beanFactory, Object.class, true, false);
+					// 遍历 IoC 容器中获取的所有 beanName
 					for (String beanName : beanNames) {
 						if (!isEligibleBean(beanName)) {
 							continue;
 						}
 						// We must be careful not to instantiate beans eagerly as in this case they
 						// would be cached by the Spring container but would not have been weaved.
+						// 获取对应的 bean 类型
 						Class<?> beanType = this.beanFactory.getType(beanName, false);
 						if (beanType == null) {
 							continue;
 						}
+						// 提取 @Aspect 注解标记的 Class，如果有就是切面类
 						if (this.advisorFactory.isAspect(beanType)) {
+							// 切面类的 beanName 加入缓存中
 							aspectNames.add(beanName);
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								// Aspect 里面的 advice 和 pointcut 被拆分成一个个的 advisor，
+								// advisor 里的 advice 和 pointcut 是一对一的关系
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
+									// 单例则直接将 Advisor 类存到缓存
 									this.advisorsCache.put(beanName, classAdvisors);
 								}
 								else {
+									// 否则将其对应的工厂缓存
 									this.aspectFactoryCache.put(beanName, factory);
 								}
 								advisors.addAll(classAdvisors);

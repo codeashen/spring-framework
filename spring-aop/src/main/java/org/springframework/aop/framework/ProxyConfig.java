@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 
 /**
+ * 用于创建代理的配置的父类，以确保所有代理创建者具有一致的属性
  * Convenience superclass for configuration used in creating proxies,
  * to ensure that all proxy creators have consistent properties.
  *
@@ -33,15 +34,20 @@ public class ProxyConfig implements Serializable {
 	/** use serialVersionUID from Spring 1.2 for interoperability. */
 	private static final long serialVersionUID = -8409359707199703185L;
 
-
+	// 标记是否直接对目标类进行代理，而不是通过接口产生代理
 	private boolean proxyTargetClass = false;
 
+	// 标记是否对代理进行优化
+	// true: 如果 bean 有接口就使用 jdk 动态代理，没有就使用 cglib
 	private boolean optimize = false;
 
+	// 标记是否需要阻止通过该配置创建的代理对象转换为 Advised 类型
 	boolean opaque = false;
 
+	// 标记代理对象是否应该被 AOP 框架通过 AopContext 以 ThreadLocal 的形式暴露出去
 	boolean exposeProxy = false;
 
+	// 标记是否需要冻结代理对象，即在代理对象生成后是否允许对其进行修改
 	private boolean frozen = false;
 
 
